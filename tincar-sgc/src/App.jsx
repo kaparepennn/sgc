@@ -5,6 +5,14 @@ import Documents from "./components/Documents";
 import RegistroEmpresa from "./components/RegistroEmpresa";
 import UsuariosRoles from "./components/UsuariosRoles";
 import AuditoriasChecklist from "./components/AuditoriasChecklist";
+import { motion } from "framer-motion";
+// ...
+<main className="flex-1 p-6">
+  <motion.div key={active} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.35 }}>
+    {active === "dashboard" && <Dashboard />}
+    ...
+  </motion.div>
+</main>
 
 export default function App() {
   const tabs = [
