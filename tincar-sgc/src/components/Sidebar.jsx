@@ -1,3 +1,4 @@
+console.log("Sidebar cargado");
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
