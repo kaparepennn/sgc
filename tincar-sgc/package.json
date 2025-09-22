@@ -8,7 +8,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@heroicons/react": "^1.0.6",
+    "@heroicons/react": "^2.2.0",
     "file-saver": "^2.0.5",
     "framer-motion": "^12.23.16",
     "jspdf": "^3.0.3",
