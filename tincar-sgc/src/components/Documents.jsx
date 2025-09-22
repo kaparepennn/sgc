@@ -4,9 +4,9 @@ import { DRIVE_URL } from "../config";
 export default function Documents(){
   // Si deseas, puedes mantener una lista local "hard-coded" o leer nombres conocidos.
   const localDocs = [
-    { name: "Manual de Calidad", path: "/docs/manual.pdf" },
-    { name: "Objetivos de Calidad", path: "/docs/objetivos.pdf" },
-    { name: "Formato Auditoría", path: "/docs/formato_auditoria.xlsx" },
+    { name: "Norma ISO19011 de 2018", path: "/docs/normaiso190112018Auditoríainterna.pdf" },
+    /*{ name: "Objetivos de Calidad", path: "/docs/objetivos.pdf" },*/
+    { name: "Formato Auditoría Interna", path: "/docs/FormatoAuditoriaInterna.xlsx" },
   ];
 
   return (
@@ -37,7 +37,6 @@ export default function Documents(){
           Aquí se podrán descargar los documentos oficiales.
         </p>
         <a href="https://drive.google.com/drive/folders/1oZ4-NeVQSxsYVd3Mko-0r9OOE2Yip1vL?usp=sharing" target="_blank" rel="noreferrer" className="inline-block px-4 py-2 bg-tincar-gold text-tincar-dark rounded font-semibold">Abrir carpeta en Drive</a>
-        <a href="https://drive.google.com/drive/folders/1d2AXA8215YzyH4iQBLb0qJ6HUuMe447v?usp=sharing">Abrir carpeta en Drive</a>
       </div>
     </div>
   );

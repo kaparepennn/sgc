@@ -1,128 +1,181 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 
-export default function UsuariosRoles({ onLogin, currentUser }) {
-  const [roles, setRoles] = useState([]);
+export default function UsuariosRoles() {
   const [usuarios, setUsuarios] = useState([]);
+  const [formData, setFormData] = useState({
+    nombre: "",
+    email: "",
+    rol: "Usuario General", // valor por defecto
+  });
+  const [editIndex, setEditIndex] = useState(null);
 
-  const [roleName, setRoleName] = useState("");
-  const [editRoleIndex, setEditRoleIndex] = useState(null);
+  // Cargar desde localStorage
+  useEffect(() => {
+    const stored = JSON.parse(localStorage.getItem("usuarios")) || [];
+    setUsuarios(stored);
+  }, []);
 
-  const [userForm, setUserForm] = useState({ nombre:"", email:"", rol:"" });
-  const [editUserIndex, setEditUserIndex] = useState(null);
+  // Guardar en localStorage
+  useEffect(() => {
+    localStorage.setItem("usuarios", JSON.stringify(usuarios));
+  }, [usuarios]);
 
-  const [loginEmail, setLoginEmail] = useState("");
-
-  useEffect(()=>{
-    setRoles(JSON.parse(localStorage.getItem("roles")) || []);
-    setUsuarios(JSON.parse(localStorage.getItem("usuarios")) || []);
-  },[]);
-
-  useEffect(()=> localStorage.setItem("roles", JSON.stringify(roles)), [roles]);
-  useEffect(()=> localStorage.setItem("usuarios", JSON.stringify(usuarios)), [usuarios]);
-
-  // Roles CRUD
-  const addRole = () => {
-    if(!roleName) return;
-    if(editRoleIndex!==null){
-      const copy = [...roles]; copy[editRoleIndex] = roleName; setRoles(copy); setEditRoleIndex(null);
-    } else setRoles([...roles, roleName]);
-    setRoleName("");
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
-  const delRole = (i) => setRoles(roles.filter((_,idx)=>idx!==i));
-  const editRole = (i) => { setRoleName(roles[i]); setEditRoleIndex(i); };
 
-  // Usuarios CRUD
-  const handleUserChange = (e) => setUserForm({...userForm, [e.target.name]: e.target.value});
-  const addOrEditUser = (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    if(editUserIndex!==null){
-      const copy = [...usuarios]; copy[editUserIndex] = userForm; setUsuarios(copy); setEditUserIndex(null);
-    } else setUsuarios([...usuarios, userForm]);
-    setUserForm({nombre:"", email:"", rol:""});
+    if (editIndex !== null) {
+      const updated = [...usuarios];
+      updated[editIndex] = formData;
+      setUsuarios(updated);
+      setEditIndex(null);
+    } else {
+      setUsuarios([...usuarios, formData]);
+    }
+    setFormData({
+      nombre: "",
+      email: "",
+      rol: "Usuario General",
+    });
   };
-  const delUser = (i) => setUsuarios(usuarios.filter((_,idx)=>idx!==i));
-  const editUser = (i) => { setUserForm(usuarios[i]); setEditUserIndex(i); };
 
-  // Login simulado
-  const handleLogin = (e) => {
-    e.preventDefault();
-    const found = usuarios.find(u => u.email === loginEmail);
-    if(found){
-      if(onLogin) onLogin(found);
-      alert("Sesión iniciada como " + found.nombre);
-    } else alert("Usuario no encontrado");
+  const handleEdit = (index) => {
+    setFormData(usuarios[index]);
+    setEditIndex(index);
+  };
+
+  const handleDelete = (index) => {
+    const updated = usuarios.filter((_, i) => i !== index);
+    setUsuarios(updated);
   };
 
   return (
-    <div>
-      <h2 className="text-2xl font-bold mb-4">Usuarios & Roles</h2>
+    <div className="p-6">
+      <h2 className="text-3xl font-bold mb-6 text-tincar-dark">
+        Registro de Usuarios y Roles
+      </h2>
 
-      <div className="grid grid-cols-2 gap-6">
-        <div className="bg-white p-4 rounded shadow">
-          <h3 className="font-semibold mb-2">Roles</h3>
-          <div className="flex gap-2 mb-3">
-            <input value={roleName} onChange={(e)=>setRoleName(e.target.value)} className="border p-2 flex-1" placeholder="Nombre del rol" />
-            <button onClick={addRole} className="px-3 py-2 bg-green-600 text-white rounded">{editRoleIndex!==null ? "Actualizar" : "Agregar"}</button>
-          </div>
-          <ul className="space-y-2">
-            {roles.map((r,i)=>(
-              <li key={i} className="flex justify-between items-center">
-                <span>{r}</span>
-                <div className="flex gap-2">
-                  <button onClick={()=>editRole(i)} className="px-2 py-1 bg-yellow-400 rounded">Editar</button>
-                  <button onClick={()=>delRole(i)} className="px-2 py-1 bg-red-500 text-white rounded">Eliminar</button>
-                </div>
-              </li>
-            ))}
-            {roles.length===0 && <li className="text-sm text-gray-500">No hay roles</li>}
-          </ul>
+      {/* Formulario */}
+      <form
+        onSubmit={handleSubmit}
+        className="bg-white shadow-lg rounded-lg p-6 grid grid-cols-2 gap-4 mb-8"
+      >
+        {/* Nombre */}
+        <div>
+          <label className="block text-sm font-medium text-tincar-dark mb-1">
+            Nombre
+          </label>
+          <input
+            type="text"
+            name="nombre"
+            value={formData.nombre}
+            onChange={handleChange}
+            className="border border-gray-300 rounded px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-tincar-gold"
+            required
+          />
         </div>
 
-        <div className="bg-white p-4 rounded shadow">
-          <h3 className="font-semibold mb-2">Usuarios</h3>
-          <form onSubmit={addOrEditUser} className="space-y-2 mb-3">
-            <input name="nombre" value={userForm.nombre} onChange={handleUserChange} className="border p-2 w-full" placeholder="Nombre completo" required />
-            <input name="email" value={userForm.email} onChange={handleUserChange} className="border p-2 w-full" placeholder="Email" required />
-            <select name="rol" value={userForm.rol} onChange={handleUserChange} className="border p-2 w-full" required>
-              <option value="">Seleccionar rol</option>
-              {roles.map((r,i)=>(<option key={i} value={r}>{r}</option>))}
-            </select>
-            <div className="flex gap-2">
-              <button type="submit" className="px-3 py-2 bg-green-600 text-white rounded">{editUserIndex!==null ? "Actualizar" : "Registrar"}</button>
-              <button type="button" onClick={()=>{ setUserForm({nombre:"",email:"",rol:""}); setEditUserIndex(null); }} className="px-3 py-2 bg-gray-200 rounded">Limpiar</button>
-            </div>
-          </form>
-          <h4 className="font-semibold">Lista de usuarios</h4>
-          <ul className="space-y-2">
-            {usuarios.map((u,i)=>(
-              <li key={i} className="flex justify-between items-center">
-                <div>
-                  <div className="font-semibold">{u.nombre}</div>
-                  <div className="text-sm text-gray-600">{u.email} • {u.rol}</div>
-                </div>
-                <div className="flex gap-2">
-                  <button onClick={()=>editUser(i)} className="px-2 py-1 bg-yellow-400 rounded">Editar</button>
-                  <button onClick={()=>delUser(i)} className="px-2 py-1 bg-red-500 text-white rounded">Eliminar</button>
-                </div>
-              </li>
-            ))}
-            {usuarios.length===0 && <li className="text-sm text-gray-500">No hay usuarios</li>}
-          </ul>
+        {/* Email */}
+        <div>
+          <label className="block text-sm font-medium text-tincar-dark mb-1">
+            Email
+          </label>
+          <input
+            type="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            className="border border-gray-300 rounded px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-tincar-gold"
+            required
+          />
         </div>
-      </div>
 
-      <div className="mt-6 bg-white p-4 rounded shadow">
-        <h3 className="font-semibold">Login Demo</h3>
-        <form onSubmit={handleLogin} className="flex gap-2 items-center mt-2">
-          <input placeholder="Email del usuario" value={loginEmail} onChange={(e)=>setLoginEmail(e.target.value)} className="border p-2 flex-1" />
-          <button type="submit" className="px-3 py-2 bg-indigo-600 text-white rounded">Iniciar Sesión</button>
-        </form>
-        <div className="mt-2 text-sm text-gray-600">Nota: este login es demo y busca el usuario por email en localStorage.</div>
-      </div>
+        {/* Rol (predefinido en un select) */}
+        <div className="col-span-2">
+          <label className="block text-sm font-medium text-tincar-dark mb-1">
+            Rol
+          </label>
+          <select
+            name="rol"
+            value={formData.rol}
+            onChange={handleChange}
+            className="border border-gray-300 rounded px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-tincar-gold"
+          >
+            <option value="Administrador del SGC">Administrador del SGC</option>
+            <option value="Auditor Interno">Auditor Interno</option>
+            <option value="Responsable de Procesos">
+              Responsable de Procesos
+            </option>
+            <option value="Líder de Calidad">Líder de Calidad</option>
+            <option value="Usuario General">Usuario General</option>
+          </select>
+        </div>
 
-      <div className="mt-4">
-        <small className="text-gray-500">Importante: para un entorno real debes implementar contraseñas seguras, cifrado y backend.</small>
-      </div>
+        {/* Botones */}
+        <div className="col-span-2 flex space-x-3 mt-4">
+          <button
+            type="submit"
+            className="bg-tincar-gold text-tincar-dark px-6 py-2 rounded font-semibold hover:bg-yellow-500 transition"
+          >
+            {editIndex !== null ? "Actualizar Usuario" : "Registrar Usuario"}
+          </button>
+          <button
+            type="button"
+            onClick={() => setUsuarios([])}
+            className="bg-tincar-dark text-white px-6 py-2 rounded font-semibold hover:bg-gray-900 transition"
+          >
+            Limpiar Lista
+          </button>
+        </div>
+      </form>
+
+      {/* Tabla de usuarios */}
+      <h3 className="text-2xl font-semibold mb-4 text-tincar-dark">
+        Usuarios Registrados
+      </h3>
+      {usuarios.length === 0 ? (
+        <p className="text-gray-500">No hay usuarios registrados.</p>
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="min-w-full border border-gray-200 shadow-lg rounded-lg overflow-hidden">
+            <thead className="bg-tincar-dark text-white">
+              <tr>
+                <th className="px-4 py-2 text-left">Nombre</th>
+                <th className="px-4 py-2 text-left">Email</th>
+                <th className="px-4 py-2 text-left">Rol</th>
+                <th className="px-4 py-2 text-left">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {usuarios.map((user, i) => (
+                <tr key={i} className={i % 2 === 0 ? "bg-white" : "bg-gray-50"}>
+                  <td className="px-4 py-2">{user.nombre}</td>
+                  <td className="px-4 py-2">{user.email}</td>
+                  <td className="px-4 py-2 font-semibold text-tincar-dark">
+                    {user.rol}
+                  </td>
+                  <td className="px-4 py-2 space-x-2">
+                    <button
+                      onClick={() => handleEdit(i)}
+                      className="bg-yellow-400 text-black px-3 py-1 rounded text-sm hover:bg-yellow-500 transition"
+                    >
+                      Editar
+                    </button>
+                    <button
+                      onClick={() => handleDelete(i)}
+                      className="bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600 transition"
+                    >
+                      Eliminar
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 }
