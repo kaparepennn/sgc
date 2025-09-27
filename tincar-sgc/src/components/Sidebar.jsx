@@ -1,85 +1,62 @@
-console.log("Sidebar cargado");
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
+import {
+  Bars3Icon,
+  XMarkIcon,
+  HomeIcon,
+  DocumentTextIcon,
+  UserGroupIcon,
+  ClipboardDocumentCheckIcon,
+  BuildingOfficeIcon,
+  AcademicCapIcon,
+} from "@heroicons/react/24/outline";
 
-export default function Sidebar({ tabs, active, onChange, currentUser, setCurrentUser }) {
-  const [open, setOpen] = useState(false);
+export default function Sidebar({ tabs, active, onChange }) {
+  const [isOpen, setIsOpen] = useState(true);
 
   return (
-    <>
-      {/* 🔹 Mobile top bar */}
-      <div className="md:hidden flex items-center justify-between p-3 bg-tincar-dark text-white">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-tincar-gold flex items-center justify-center font-bold">T</div>
-          <div className="font-semibold">TinCar SGC</div>
-        </div>
-        <button onClick={() => setOpen(!open)} aria-label="menu">
-          {open ? <XMarkIcon className="w-6 h-6" /> : <Bars3Icon className="w-6 h-6" />}
+    <div className="flex">
+      {/* Botón menú móvil */}
+      <div className="md:hidden p-4">
+        <button onClick={() => setIsOpen(!isOpen)}>
+          {isOpen ? (
+            <XMarkIcon className="h-8 w-8 text-tincar-gold" />
+          ) : (
+            <Bars3Icon className="h-8 w-8 text-tincar-gold" />
+          )}
         </button>
       </div>
 
-      {/* 🔹 Mobile Sidebar animado */}
+      {/* Menú lateral */}
       <AnimatePresence>
-        {open && (
-          <motion.div
-            initial={{ x: "-100%" }}
+        {isOpen && (
+          <motion.aside
+            initial={{ x: -250 }}
             animate={{ x: 0 }}
-            exit={{ x: "-100%" }}
+            exit={{ x: -250 }}
             transition={{ duration: 0.3 }}
-            className="fixed inset-y-0 left-0 z-50 w-64 bg-tincar-dark text-white shadow-lg md:hidden"
+            className="bg-tincar-black text-tincar-gold w-64 min-h-screen p-6 hidden md:block"
           >
-            <div className="flex items-center justify-between p-4 border-b border-tincar-gold">
-              <div className="font-bold">Menú</div>
-              <button onClick={() => setOpen(false)}>
-                <XMarkIcon className="w-6 h-6" />
-              </button>
-            </div>
-            <nav className="flex flex-col p-4 space-y-2">
+            <h1 className="text-2xl font-bold mb-6">TinCar SGC</h1>
+            <nav>
               {tabs.map((tab) => (
                 <button
                   key={tab.key}
-                  className={`flex items-center px-3 py-2 rounded-md text-sm font-medium ${
+                  onClick={() => onChange(tab.key)}
+                  className={`flex items-center w-full px-4 py-3 mb-2 rounded-lg transition-colors ${
                     active === tab.key
-                      ? "bg-tincar-gold text-tincar-dark"
-                      : "hover:bg-gray-700"
+                      ? "bg-tincar-gold text-tincar-black"
+                      : "hover:bg-tincar-gray hover:text-white"
                   }`}
-                  onClick={() => {
-                    onChange(tab.key);
-                    setOpen(false);
-                  }}
                 >
-                  {tab.icon && <tab.icon className="w-5 h-5 mr-2" />}
+                  <tab.icon className="h-5 w-5 mr-3" />
                   {tab.label}
                 </button>
               ))}
             </nav>
-          </motion.div>
+          </motion.aside>
         )}
       </AnimatePresence>
-
-      {/* 🔹 Desktop Sidebar */}
-      <div className="hidden md:flex md:flex-col md:w-64 md:min-h-screen bg-tincar-dark text-white">
-        <div className="flex items-center justify-center h-16 border-b border-tincar-gold">
-          <span className="text-xl font-bold text-tincar-gold">TinCar SGC</span>
-        </div>
-        <nav className="flex flex-col p-4 space-y-2">
-          {tabs.map((tab) => (
-            <button
-              key={tab.key}
-              className={`flex items-center px-3 py-2 rounded-md text-sm font-medium ${
-                active === tab.key
-                  ? "bg-tincar-gold text-tincar-dark"
-                  : "hover:bg-gray-700"
-              }`}
-              onClick={() => onChange(tab.key)}
-            >
-              {tab.icon && <tab.icon className="w-5 h-5 mr-2" />}
-              {tab.label}
-            </button>
-          ))}
-        </nav>
-      </div>
-    </>
+    </div>
   );
 }

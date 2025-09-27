@@ -1,21 +1,17 @@
-/** @type {import('tailwindcss').Config} */
+// tailwind.config.js
 module.exports = {
-  content: [
-    "./index.html",
-    "./src/**/*.{js,jsx}"
-  ],
+  content: ["./index.html", "./src/**/*.{js,jsx,ts,tsx}"],
   theme: {
     extend: {
       colors: {
         tincar: {
-          gold: "#D4AF37",       // dorado
-          dark: "#0B1724",       // azul oscuro / negro
-          blue: "#0B63A5"        // acento azul
-        }
+          gold: "#FFB300",   // Amarillo dorado (principal)
+          gray: "#2C2C2C",   // Gris oscuro (fondos neutros)
+          black: "#1A1919",  // Negro profundo
+          beige: "#FFEFCA",  // Beige claro
+          orange: "#E88E2E", // Naranja acento
+        },
       },
-      boxShadow: {
-        "soft-md": "0 8px 24px rgba(11,23,36,0.12)"
-      }
     },
   },
   plugins: [],

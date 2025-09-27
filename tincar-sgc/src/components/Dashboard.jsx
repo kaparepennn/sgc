@@ -1,75 +1,96 @@
 import React from "react";
 import {
+  PieChart,
+  Pie,
+  Cell,
   BarChart,
   Bar,
   XAxis,
   YAxis,
-  CartesianGrid,
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
 
-// Datos ficticios (mock data)
-const dataIncidencias = [
-  { mes: "Ene", resueltas: 12, pendientes: 5 },
-  { mes: "Feb", resueltas: 15, pendientes: 3 },
-  { mes: "Mar", resueltas: 20, pendientes: 7 },
-  { mes: "Abr", resueltas: 18, pendientes: 2 },
+const dataPie = [
+  { name: "Documentos", value: 12 },
+  { name: "Incidencias", value: 5 },
+  { name: "Usuarios", value: 3 },
 ];
+
+const dataBar = [
+  { name: "Enero", incidencias: 4 },
+  { name: "Febrero", incidencias: 6 },
+  { name: "Marzo", incidencias: 2 },
+];
+
+const COLORS = ["#FFB300", "#E88E2E", "#1A1919"];
 
 export default function Dashboard() {
   return (
-    <div className="p-6">
-      <h2 className="text-3xl font-bold text-tincar-dark mb-6">
-        Dashboard - Indicadores de Calidad
-      </h2>
+    <div className="p-6 bg-tincar-gray min-h-screen text-white">
+      <h2 className="text-3xl font-bold text-tincar-gold mb-6">Dashboard</h2>
 
-      {/* Grid principal */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        {/* Entregas a tiempo */}
-        <div className="bg-white shadow-lg rounded-lg p-6 border-t-4 border-tincar-gold">
-          <h3 className="text-sm text-gray-500 mb-2">Proyectos a tiempo</h3>
-          <p className="text-3xl font-bold text-tincar-dark">92%</p>
-          <p className="text-green-600 text-sm">+5% vs mes anterior</p>
+      {/* Grid de cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="bg-tincar-black text-center shadow-lg rounded-lg p-6">
+          <h3 className="text-xl font-bold text-tincar-gold">Documentos</h3>
+          <p className="text-3xl font-bold text-white">12</p>
         </div>
 
-        {/* Incidencias */}
-        <div className="bg-white shadow-lg rounded-lg p-6 border-t-4 border-tincar-blue">
-          <h3 className="text-sm text-gray-500 mb-2">Incidencias resueltas</h3>
-          <p className="text-3xl font-bold text-tincar-dark">87%</p>
-          <p className="text-green-600 text-sm">✔ Mejorando</p>
+        <div className="bg-tincar-black text-center shadow-lg rounded-lg p-6">
+          <h3 className="text-xl font-bold text-tincar-gold">Incidencias</h3>
+          <p className="text-3xl font-bold text-white">5</p>
         </div>
 
-        {/* Satisfacción */}
-        <div className="bg-white shadow-lg rounded-lg p-6 border-t-4 border-tincar-dark">
-          <h3 className="text-sm text-gray-500 mb-2">Satisfacción Cliente</h3>
-          <p className="text-3xl font-bold text-tincar-dark">4.6 / 5</p>
-          <p className="text-yellow-600 text-sm">📈 Tendencia positiva</p>
-        </div>
-
-        {/* No conformidades */}
-        <div className="bg-white shadow-lg rounded-lg p-6 border-t-4 border-red-500">
-          <h3 className="text-sm text-gray-500 mb-2">No Conformidades</h3>
-          <p className="text-3xl font-bold text-tincar-dark">3</p>
-          <p className="text-red-600 text-sm">⚠ Requiere atención</p>
+        <div className="bg-tincar-black text-center shadow-lg rounded-lg p-6">
+          <h3 className="text-xl font-bold text-tincar-gold">Usuarios</h3>
+          <p className="text-3xl font-bold text-white">3</p>
         </div>
       </div>
 
-      {/* Gráfica de incidencias */}
-      <div className="bg-white shadow-lg rounded-lg p-6">
-        <h3 className="text-lg font-semibold text-tincar-dark mb-4">
-          Evolución de Incidencias
-        </h3>
-        <ResponsiveContainer width="100%" height={300}>
-          <BarChart data={dataIncidencias}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="mes" />
-            <YAxis />
-            <Tooltip />
-            <Bar dataKey="resueltas" fill="#D4AF37" name="Resueltas" />
-            <Bar dataKey="pendientes" fill="#0B63A5" name="Pendientes" />
-          </BarChart>
-        </ResponsiveContainer>
+      {/* Sección de gráficas */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+        <div className="bg-tincar-black p-6 rounded-lg shadow-lg text-white">
+          <h3 className="text-lg font-semibold mb-4 text-tincar-gold">
+            Distribución General
+          </h3>
+          <ResponsiveContainer width="100%" height={250}>
+            <PieChart>
+              <Pie
+                data={dataPie}
+                cx="50%"
+                cy="50%"
+                labelLine={false}
+                outerRadius={80}
+                fill="#8884d8"
+                dataKey="value"
+              >
+                {dataPie.map((entry, index) => (
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={COLORS[index % COLORS.length]}
+                  />
+                ))}
+              </Pie>
+              <Tooltip />
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
+
+        {/* Fondo claro → texto oscuro */}
+        <div className="bg-tincar-beige p-6 rounded-lg shadow-lg text-tincar-black">
+          <h3 className="text-lg font-semibold mb-4">
+            Incidencias por mes
+          </h3>
+          <ResponsiveContainer width="100%" height={250}>
+            <BarChart data={dataBar}>
+              <XAxis dataKey="name" stroke="#1A1919" />
+              <YAxis stroke="#1A1919" />
+              <Tooltip />
+              <Bar dataKey="incidencias" fill="#FFB300" />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
       </div>
     </div>
   );
